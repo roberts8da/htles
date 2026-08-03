@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BotCraft Dev Hub — Next-Gen Discord Frameworks</title>
+    <meta name="description" content="A premium technical log dedicated to cutting-edge Discord bot engineering, microservices, and event-driven architecture.">
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <style>
+/* ===== SYSTEM VARIABLES & LIGHTS ===== */
+:root {
+    --canvas: #030712;
+    --card-bg: rgba(17, 24, 39, 0.4);
+    --border-glow: rgba(99, 102, 241, 0.15);
+    --border-active: rgba(99, 102, 241, 0.4);
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --cyber-neon: #818cf8;
+    --cyber-mint: #34d399;
+    --cyber-rose: #f43f5e;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    background-color: var(--canvas);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+.container { max-width: 1300px; margin: 0 auto; padding: 0 32px; }
+
+/* ===== GLOW NEON BACKGROUND ===== */
+.cyber-blur {
+    position: absolute; width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
+    z-index: 0; pointer-events: none;
+}
+.blur-1 { top: -10%; left: -10%; }
+.blur-2 { top: 40%; right: -10%; background: radial-gradient(circle, rgba(52,211,153,0.04) 0%, transparent 70%); }
+
+/* ===== GLOBAL UI UTILITIES ===== */
+.glow-link { color: var(--cyber-neon); text-shadow: 0 0 10px rgba(129,140,248,0.3); font-weight: 500; font-family: var(--font-mono); font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; }
+.badge { display: inline-flex; font-family: var(--font-mono); font-size: 0.75rem; padding: 4px 10px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+.badge-neon { background: rgba(129,140,248,0.1); color: var(--cyber-neon); border: 1px solid rgba(129,140,248,0.2); }
+.badge-mint { background: rgba(52,211,153,0.1); color: var(--cyber-mint); border: 1px solid rgba(52,211,153,0.2); }
+.badge-rose { background: rgba(244,63,94,0.1); color: var(--cyber-rose); border: 1px solid rgba(244,63,94,0.2); }
+
+/* ===== MINIMALIST HEADER BAR ===== */
+.top-nav {
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: rgba(3, 7, 18, 0.7);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+}
+.nav-wrapper { display: flex; justify-content: space-between; align-items: center; height: 72px; }
+.brand { font-family: var(--font-mono); font-weight: 700; font-size: 1.1rem; letter-spacing: -0.03em; display: flex; align-items: center; gap: 8px; text-decoration: none; color: #fff;}
+.brand span { color: var(--cyber-mint); }
+.menu { display: flex; gap: 32px; list-style: none; }
+.menu a { font-size: 0.9rem; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+.menu a:hover, .menu .active-link { color: var(--text-primary); }
+.nav-action { border: 1px solid var(--cyber-neon); padding: 8px 16px; border-radius: 6px; background: transparent; color: #fff; font-family: var(--font-mono); font-size: 0.8rem; cursor: pointer; transition: background 0.3s; text-decoration: none;}
+.nav-action:hover { background: rgba(129,140,248,0.1); box-shadow: 0 0 20px rgba(129,140,248,0.2); }
+
+/* ===== SPLIT HERO ENGINE ===== */
+.hero-engine { position: relative; padding: 160px 0 80px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: center; }
+.hero-meta h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.04em; margin-bottom: 24px; color: #fff; }
+.hero-meta p { font-size: 1.05rem; color: var(--text-secondary); margin-bottom: 36px; max-width: 520px; }
+.terminal-card { background: #090d16; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 24px; font-family: var(--font-mono); box-shadow: 0 30px 60px rgba(0,0,0,0.6); position: relative;}
+.terminal-card::before { content: ''; position: absolute; top: -1px; left: 40px; right: 40px; height: 1px; background: linear-gradient(90deg, transparent, var(--cyber-neon), transparent); }
+.term-header { display: flex; gap: 6px; margin-bottom: 16px; align-items: center; color: var(--text-secondary); font-size: 0.75rem;}
+.term-circle { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+.term-body p { font-size: 0.85rem; margin-bottom: 8px; color: var(--text-secondary); }
+.term-body .output { color: var(--cyber-mint); }
+.term-body .cursor { display: inline-block; width: 6px; height: 14px; background: var(--text-primary); margin-left: 4px; animation: blink 1s infinite; vertical-align: middle;}
+
+/* ===== BENTO HUB GRID (ARTICLES) ===== */
+.bento-section { padding: 80px 0; border-top: 1px solid rgba(255,255,255,0.05); }
+.section-title-alt { font-family: var(--font-mono); font-size: 0.85rem; color: var(--cyber-mint); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.1em;}
+.section-heading-alt { font-size: 1.8rem; font-weight: 700; margin-bottom: 40px; letter-spacing: -0.02em; }
+.bento-layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+.bento-card { background: var(--card-bg); border: 1px solid var(--border-glow); border-radius: 16px; padding: 32px; display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); min-height: 280px; position: relative; overflow: hidden; }
+.bento-card::after { content: ''; position: absolute; inset: 0; background: radial-gradient(800px circle at var(--x, 0px) var(--y, 0px), rgba(255,255,255,0.03), transparent 40%); pointer-events: none;}
+.bento-card:hover { border-color: var(--border-active); transform: translateY(-4px); background: rgba(20, 27, 45, 0.6); }
+.bento-wide { grid-column: span 2; }
+.bento-tall { grid-row: span 2; justify-content: space-between; }
+
+.card-top h3 { font-size: 1.3rem; font-weight: 600; color: #fff; margin-bottom: 12px; letter-spacing: -0.01em;}
+.card-top p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
+.card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); }
+
+/* ===== DYNAMIC ARCHITECTURE SPLIT ===== */
+.arch-section { padding: 80px 0; background: rgba(17, 24, 39, 0.2); border-top: 1px solid rgba(255,255,255,0.05); }
+.arch-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 48px; }
+.arch-tabs { display: flex; flex-direction: column; gap: 12px; }
+.arch-tab-btn { background: transparent; border: 1px solid transparent; text-align: left; padding: 20px; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
+.arch-tab-btn.active { background: #0b0f19; border-color: var(--border-glow); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+.arch-tab-btn h4 { font-size: 1rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; transition: color 0.2s;}
+.arch-tab-btn.active h4 { color: #fff; }
+.arch-tab-btn p { font-size: 0.85rem; color: #6b7280; }
+.arch-display { background: #070a12; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 32px; display: flex; flex-direction: column; justify-content: center;}
+
+.stream-node { background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 8px; padding: 16px; font-family: var(--font-mono); font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.stream-node:last-child { margin-bottom: 0; }
+.status-indicator { display: inline-flex; align-items: center; gap: 6px; color: var(--cyber-mint); }
+.pulse-dot { width: 6px; height: 6px; background: var(--cyber-mint); border-radius: 50%; box-shadow: 0 0 10px var(--cyber-mint); }
+
+/* ===== MODERN FOOTER ===== */
+.meta-footer { border-top: 1px solid rgba(255,255,255,0.05); padding: 48px 0; font-family: var(--font-mono); font-size: 0.8rem; color: #4b5563; }
+.footer-wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; }
+.footer-links-alt { display: flex; gap: 32px; }
+.footer-links-alt a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+.footer-links-alt a:hover { color: var(--cyber-neon); }
+
+/* ===== RESPONSIVE SYSTEMS ===== */
+@media(max-width: 1024px) {
+    .hero-engine, .arch-grid { grid-template-columns: 1fr; gap: 40px; }
+    .bento-layout { grid-template-columns: 1fr; }
+    .bento-wide { grid-column: span 1; }
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="cyber-blur blur-1"></div>
+    <div class="cyber-blur blur-2"></div>
+
+    <!-- MINIMALIST HEADER -->
+    <nav class="top-nav">
+        <div class="container nav-wrapper">
+            <a href="#" class="brand">BOTCRAFT<span>//</span>HUB</a>
+            <ul class="menu">
+                <li><a href="#" class="active-link">Architecture</a></li>
+                <li><a href="#">Bento Logs</a></li>
+                <li><a href="#">Pipelines</a></li>
+            </ul>
+            <a href="#" class="nav-action">Connect Nodes <i class="fas fa-terminal"></i></a>
+        </div>
+    </nav>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BotCraft Dev Hub</title>
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <style>
+        :root {
+            --canvas: #030712;
+            --card-bg: rgba(17, 24, 39, 0.4);
+            --border-glow: rgba(99, 102, 241, 0.15);
+            --border-active: rgba(99, 102, 241, 0.4);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --cyber-neon: #818cf8;
+            --cyber-mint: #34d399;
+            --cyber-rose: #f43f5e;
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--canvas); color: var(--text-primary); font-family: var(--font-sans); padding: 80px 0; }
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 32px; }
+        .badge { display: inline-flex; font-family: var(--font-mono); font-size: 0.75rem; padding: 4px 10px; border-radius: 4px; background: rgba(129,140,248,0.1); color: var(--cyber-neon); border: 1px solid rgba(129,140,248,0.2); margin-bottom: 12px; }
+        .hero-engine { display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: center; margin-bottom: 80px; }
+        .hero-meta h1 { font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 24px; }
+        .hero-meta p { color: var(--text-secondary); margin-bottom: 36px; }
+        .glow-link { color: var(--cyber-neon); text-shadow: 0 0 10px rgba(129,140,248,0.3); font-weight: 500; font-family: var(--font-mono); font-size: 0.85rem; text-decoration: none; }
+        .terminal-card { background: #090d16; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 24px; font-family: var(--font-mono); }
+        .term-header { display: flex; gap: 6px; margin-bottom: 16px; align-items: center; color: var(--text-secondary); font-size: 0.75rem; }
+        .term-circle { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+        .term-body p { font-size: 0.85rem; margin-bottom: 8px; color: var(--text-secondary); }
+        .term-body .output { color: var(--cyber-mint); }
+        .bento-section { padding: 40px 0; }
+        .bento-layout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .bento-card { background: var(--card-bg); border: 1px solid var(--border-glow); border-radius: 16px; padding: 32px; text-decoration: none; color: inherit; }
+        .arch-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 48px; margin-top: 40px; }
+        .arch-tabs { display: flex; flex-direction: column; gap: 12px; }
+        .arch-tab-btn { background: transparent; border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; color: var(--text-secondary); text-align: left; cursor: pointer; }
+        .arch-tab-btn.active { border-color: var(--cyber-neon); color: #fff; }
+        .arch-display { background: #070a12; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 32px; }
+        .stream-node { background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 8px; padding: 16px; font-family: var(--font-mono); font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .status-indicator { display: inline-flex; align-items: center; gap: 6px; color: var(--cyber-mint); }
+        .pulse-dot { width: 6px; height: 6px; background: var(--cyber-mint); border-radius: 50%; display: inline-block; }
+        .meta-footer { border-top: 1px solid rgba(255,255,255,0.05); padding: 48px 0; margin-top: 80px; font-family: var(--font-mono); font-size: 0.8rem; color: #4b5563; }
+        .footer-wrap { display: flex; justify-content: space-between; align-items: center; }
+        .footer-links-alt { display: flex; gap: 32px; }
+        .footer-links-alt a { color: var(--text-secondary); text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <header class="container hero-engine">
+        <div class="hero-meta">
+            <span class="badge badge-neon">Protocol v4.2 Status: Active</span>
+            <h1>Engineering High-Availability Discord Networks</h1>
+            <p>A highly focused telemetry log covering event loops, horizontal clustering mechanisms, and custom cache hydration architectures for developers.</p>
+            <a href="#" class="glow-link">INITIALIZE SYSTEM DISPATCHER <i class="fas fa-chevron-right"></i></a>
+        </div>
+        <div class="terminal-card">
+            <div class="term-header">
+                <div class="term-circle"></div>
+                <div class="term-circle"></div>
+                <div class="term-circle"></div>
+                <span style="margin-left: 8px;">shard-manager --cluster=03</span>
+            </div>
+            <div class="term-body">
+                <p>[system] Initializing multi-process broker network...</p>
+                <p>[redis] Connected to cluster host instance at port 6379</p>
+                <p class="output">[gateway] Shard #12 spawned: Listening for payload events</p>
+                <p>[telemetry] WebSocket handshake execution took 42ms</p>
+                <p>$</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container bento-section">
+        <div class="bento-layout">
+            <div class="bento-card">
+                <h3>Bento Architecture Tracking</h3>
+                <p>Move your cursor over this element to test coordinate tracking structures within live layouts.</p>
+            </div>
+            <div class="bento-card">
+                <h3>System Telemetry Streams</h3>
+                <p>Monitor raw packets across interface nodes dynamically.</p>
+            </div>
+        </div>
+
+        <div class="arch-grid">
+            <div class="arch-tabs">
+                <button class="arch-tab-btn active" data-target="ingress">01 // Ingress Layer</button>
+                <button class="arch-tab-btn" data-target="broker">02 // Message Broker</button>
+                <button class="arch-tab-btn" data-target="handler">03 // V8 Runtime</button>
+            </div>
+            <div class="arch-display" id="archDisplay">
+                <div class="stream-node">
+                    <span>Edge Node: cf-sfo-02</span>
+                    <span class="status-indicator"><span class="pulse-dot"></span> Verifying Ed25519</span>
+                </div>
+                <div class="stream-node">
+                    <span>Rate Limiter Interceptor</span>
+                    <span class="status-indicator" style="color:var(--cyber-neon);">0 / 10k bucket</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="meta-footer">
+        <div class="container footer-wrap">
+            <p>&copy; 2026 BotCraft Technical Systems. All nodes operational.</p>
+            <div class="footer-links-alt">
+                <a href="#">Source Code</a>
+                <a href="#">Network Registry</a>
+                <a href="#">Privacy Engine</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.bento-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--x', `${e.clientX - rect.left}px`);
+                card.style.setProperty('--y', `${e.clientY - rect.top}px`);
+            });
+        });
+
+        const tabData = {
+            ingress: `
+                <div class="stream-node">
+                    <span>Edge Node: cf-sfo-02</span>
+                    <span class="status-indicator"><span class="pulse-dot"></span> Verifying Ed25519</span>
+                </div>
+                <div class="stream-node">
+                    <span>Rate Limiter Interceptor</span>
+                    <span class="status-indicator" style="color:var(--cyber-neon);">0 / 10k bucket</span>
+                </div>
+            `,
+            broker: `
+                <div class="stream-node">
+                    <span>Redis Stream Cluster Broker</span>
+                    <span class="status-indicator"><span class="pulse-dot"></span> 1,240 msg/sec</span>
+                </div>
+                <div class="stream-node">
+                    <span>Payload Consumer Shard #04</span>
+                    <span class="status-indicator" style="color:var(--cyber-rose);">ACK Acknowledged</span>
+                </div>
+            `,
+            handler: `
+                <div class="stream-node">
+                    <span>Context Resolver Module</span>
+                    <span class="status-indicator"><span class="pulse-dot"></span> Bound OK</span>
+                </div>
+                <div class="stream-node">
+                    <span>V8 Sandbox Execution Loop</span>
+                    <span class="status-indicator" style="color:var(--cyber-mint);">Completed in 4ms</span>
+                </div>
+            `
+        };
+
+        document.querySelectorAll('.arch-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.arch-tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const target = btn.getAttribute('data-target');
+                document.getElementById('archDisplay').innerHTML = tabData[target];
+            });
+        });
+    </script>
+</body>
+</html>
+
